@@ -4,7 +4,8 @@
   "description": "",
   "main": "",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ./src/index.js"
   },
   "repository": {
     "type": "git",
@@ -15,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/l7960261/sitemap-generator/issues"
   },
-  "homepage": "https://github.com/l7960261/sitemap-generator#readme"
+  "homepage": "https://github.com/l7960261/sitemap-generator#readme",
+  "dependencies": {
+    "puppeteer": "^21.0.2"
+  }
 }
