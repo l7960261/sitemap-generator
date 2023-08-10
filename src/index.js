@@ -1,17 +1,14 @@
+const config = require("./config");
 const WebService = require("./pptr");
 const Log = require("./log");
+const Rules = require("./rules");
 
 (async () => {
-  const base = "https://nohu99.org/";
+  const { base } = config;
   Log.log(`Queuing ${base}`);
   const result = await WebService.run(base);
   Log.log(`Data received ${JSON.stringify(result)}`);
   const { links, imgs } = result;
-  // filter links
-  // 1. exclude not base
-  // 2. exclude hash
-  const newLinks = links
-    .filter((item) => item.includes(base))
-    .filter((item) => !item.includes("#"))
+  const newLinks = Rules.format(links);
   Log.log(`${JSON.stringify(newLinks)}`);
 })();
