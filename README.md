@@ -1,0 +1,6 @@
+# SITEMAP GENERATOR FOR SINGLE PAGE APPLICATION
+
+```
+npm install
+npm start
+```
