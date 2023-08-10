@@ -1,7 +1,9 @@
-const WebService = require('./pptr');
+const WebService = require("./pptr");
+const Log = require("./log");
 
 (async () => {
-  const base = 'https://nohu99.org/';
+  const base = "https://nohu99.org/";
+  Log.log(`Queuing ${base}`);
   const result = await WebService.run(base);
-  console.log(result);
+  Log.log(`Data received ${JSON.stringify(result)}`);
 })();

@@ -14,12 +14,10 @@ const WebService = {
         collection.map((ele) => ele.src)
       );
 
-      console.log(links);
-      console.log(imgs);
       await browser.close();
       return { links, imgs };
     } catch (error) {
-      return { links: [], imgs: [] }
+      return { links: [], imgs: [] };
     }
   },
 };
