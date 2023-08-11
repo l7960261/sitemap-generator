@@ -4,7 +4,7 @@ const Log = require("./log");
 const Rules = require("./rules");
 const R = require("ramda");
 
-const { base, crawlLevel } = config;
+const { base, crawlLevel, maxPage } = config;
 const baseUrlHashes = base.split("/").length;
 const pending = [];
 const completed = [];
@@ -18,13 +18,17 @@ const images = [];
 function autoCrawler() {
   let counter = 0;
 
-  while (pending.length > 0 && completed.length < 10) {
+  while (pending.length > 0 && completed.length < maxPage) {
     const url = pending.pop();
     Log.log(`Queuing ${url}`);
 
     counter = counter + 1;
     completed.push(url);
-    getData(url, counter);
+    getData(url, counter).then(() => {
+      if (images.length == maxPage) {
+        Log.log("Ending");
+      }
+    });
   }
 
   function getData(url, index) {
@@ -33,7 +37,7 @@ function autoCrawler() {
 
       Log.log(`Data Queued ${index} - Completed`);
       const { links, imgs } = result;
-      images.push(imgs);
+      images[index] = imgs;
       const newLinks = Rules.format(links);
       queue(newLinks);
     });
