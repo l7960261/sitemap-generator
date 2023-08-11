@@ -9,6 +9,7 @@ const baseUrlHashes = base.split("/").length;
 const pending = [];
 const completed = [];
 const images = [];
+let counter = 0;
 
 (async () => {
   pending.push(base);
@@ -16,7 +17,6 @@ const images = [];
 })();
 
 function autoCrawler() {
-  let counter = 0;
 
   while (pending.length > 0 && completed.length < maxPage) {
     const url = pending.pop();
