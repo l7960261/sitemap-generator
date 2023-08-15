@@ -11,21 +11,21 @@ const completed = [];
 const images = [];
 let counter = 0;
 
-(async () => {
+(() => {
   pending.push(base);
+  process.setMaxListeners(Infinity);
   autoCrawler();
 })();
 
 function autoCrawler() {
-
-  while (pending.length > 0 && completed.length < maxPage) {
+  while (pending.length > 0) {
     const url = pending.pop();
     Log.log(`Queuing ${url}`);
 
     counter = counter + 1;
     completed.push(url);
     getData(url, counter).then(() => {
-      if (images.length == maxPage) {
+      if (images.length == completed.length) {
         Log.log("Ending");
       }
     });
