@@ -4,53 +4,49 @@ const Log = require("./log");
 const Rules = require("./rules");
 const R = require("ramda");
 
-const { base, crawlLevel, maxPage } = config;
-const baseUrlHashes = base.split("/").length;
-const pending = [];
+const { base } = config;
 const completed = [];
 const images = [];
-let counter = 0;
 
 (() => {
-  pending.push(base);
-  process.setMaxListeners(Infinity);
-  autoCrawler();
+  start([base]);
 })();
 
-function autoCrawler() {
-  while (pending.length > 0) {
-    const url = pending.pop();
-    Log.log(`Queuing ${url}`);
-
-    counter = counter + 1;
-    completed.push(url);
-    getData(url, counter).then(() => {
-      if (images.length == completed.length) {
-        Log.log("Ending");
-      }
-    });
+function start(urls = []) {
+  if (urls.length > 0) {
+    Log.log(`Start to crawler ${JSON.stringify(urls)}`);
+    return crawler(urls);
   }
 
-  function getData(url, index) {
-    return WebService.run(url).then((result) => {
-      Log.log(`Data received for the ${url}`);
-
-      Log.log(`Data Queued ${index} - Completed`);
-      const { links, imgs } = result;
-      images[index] = imgs;
-      const newLinks = Rules.format(links);
-      queue(newLinks);
-    });
-  }
+  return new Promise((resolve, reject) => {
+    Log.log("Ending");
+    Log.log(`completed: ${JSON.stringify(completed.length)}`);
+    Log.log(`images: ${JSON.stringify(images.length)}`);
+    resolve();
+  });
 }
 
-function queue(urls) {
-  const removingCompleted = R.uniq(R.without(completed, urls));
-  const removingPending = R.without(pending, removingCompleted);
-  const removingIngoreLevels = removingPending.filter(
-    (url) => url.split("/").length <= baseUrlHashes + crawlLevel
-  );
+function crawler(urls) {
+  Log.log(`Queuing ${JSON.stringify(urls)}`);
+  completed.push(...urls);
 
-  pending.push(...removingIngoreLevels);
-  autoCrawler();
+  return Promise.all(
+    urls.map((url) =>
+      WebService.run(url).then((result) => {
+        Log.log(`Data received for the ${url}`);
+        const { links, imgs } = result;
+        const index = completed.indexOf(url);
+        images[index] = imgs;
+        Log.log(`Sort out links`);
+        const newLinks = Rules.format(links);
+        const removingCompleted = R.uniq(R.without(completed, newLinks));
+        return removingCompleted;
+      })
+    )
+  ).then((collection) => {
+    const allLinks = collection.reduce((prev, curr) => prev.concat(curr), []);
+    const uniqAllLinks = R.uniq(allLinks);
+    Log.log(`Data next queue for the ${JSON.stringify(uniqAllLinks)}`);
+    return start(uniqAllLinks);
+  });
 }
