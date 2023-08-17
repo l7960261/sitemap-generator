@@ -9,6 +9,8 @@ const completed = [];
 const images = [];
 
 (() => {
+  // MaxListenersExceededWarning: Possible EventEmitter memory leak detected.
+  process.setMaxListeners(Infinity);
   start([base]);
 })();
 
