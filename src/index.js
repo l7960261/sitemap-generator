@@ -3,6 +3,7 @@ const WebService = require("./pptr");
 const Log = require("./log");
 const Rules = require("./rules");
 const R = require("ramda");
+const XmlService = require('./xml');
 
 const { base } = config;
 const completed = [];
@@ -25,6 +26,8 @@ function start(urls = []) {
     Log.log(`completed: ${JSON.stringify(completed.length)}`);
     Log.log(`images: ${JSON.stringify(images.length)}`);
     resolve();
+  }).then(() => {
+    XmlService.create(completed, images);
   });
 }
 

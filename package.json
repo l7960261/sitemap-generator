@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/l7960261/sitemap-generator#readme",
   "dependencies": {
+    "dayjs": "^1.11.9",
     "puppeteer": "^21.0.2",
     "ramda": "^0.29.0"
   }
