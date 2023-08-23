@@ -11,7 +11,7 @@ const images = [];
 
 (() => {
   // MaxListenersExceededWarning: Possible EventEmitter memory leak detected.
-  // process.setMaxListeners(Infinity);
+  process.setMaxListeners(Infinity);
   start([base]);
 })();
 
@@ -35,49 +35,49 @@ function crawler(urls) {
   Log.log(`Queuing ${JSON.stringify(urls)}`);
   completed.push(...urls);
 
-  return R.splitEvery(10, urls)
-    .reduce((prev, curr) => {
-      return prev.then((prevResult) =>
-        Promise.all(
-          curr.map((url) =>
-            WebService.run(url).then((result) => {
-              Log.log(`Data received for the ${url}`);
-              const { links, imgs } = result;
-              const index = completed.indexOf(url);
-              images[index] = imgs;
-              Log.log(`Sort out links`);
-              const newLinks = Rules.format(links);
-              const removingCompleted = R.uniq(R.without(completed, newLinks));
-              return removingCompleted;
-            })
-          )
-        ).then((currResult) => prevResult.concat(currResult))
-      );
-    }, Promise.resolve([]))
-    .then((collection) => {
-      const allLinks = collection.reduce((prev, curr) => prev.concat(curr), []);
-      const uniqAllLinks = R.uniq(allLinks);
-      Log.log(`Data next queue for the ${JSON.stringify(uniqAllLinks)}`);
-      return start(uniqAllLinks);
-    });
+  // return R.splitEvery(10, urls)
+  //   .reduce((prev, curr) => {
+  //     return prev.then((prevResult) =>
+  //       Promise.all(
+  //         curr.map((url) =>
+  //           WebService.run(url).then((result) => {
+  //             Log.log(`Data received for the ${url}`);
+  //             const { links, imgs } = result;
+  //             const index = completed.indexOf(url);
+  //             images[index] = imgs;
+  //             Log.log(`Sort out links`);
+  //             const newLinks = Rules.format(links);
+  //             const removingCompleted = R.uniq(R.without(completed, newLinks));
+  //             return removingCompleted;
+  //           })
+  //         )
+  //       ).then((currResult) => prevResult.concat(currResult))
+  //     );
+  //   }, Promise.resolve([]))
+  //   .then((collection) => {
+  //     const allLinks = collection.reduce((prev, curr) => prev.concat(curr), []);
+  //     const uniqAllLinks = R.uniq(allLinks);
+  //     Log.log(`Data next queue for the ${JSON.stringify(uniqAllLinks)}`);
+  //     return start(uniqAllLinks);
+  //   });
 
-  // return Promise.all(
-  //   urls.map((url) =>
-  //     WebService.run(url).then((result) => {
-  //       Log.log(`Data received for the ${url}`);
-  //       const { links, imgs } = result;
-  //       const index = completed.indexOf(url);
-  //       images[index] = imgs;
-  //       Log.log(`Sort out links`);
-  //       const newLinks = Rules.format(links);
-  //       const removingCompleted = R.uniq(R.without(completed, newLinks));
-  //       return removingCompleted;
-  //     })
-  //   )
-  // ).then((collection) => {
-  //   const allLinks = collection.reduce((prev, curr) => prev.concat(curr), []);
-  //   const uniqAllLinks = R.uniq(allLinks);
-  //   Log.log(`Data next queue for the ${JSON.stringify(uniqAllLinks)}`);
-  //   return start(uniqAllLinks);
-  // });
+  return Promise.all(
+    urls.map((url) =>
+      WebService.run(url).then((result) => {
+        Log.log(`Data received for the ${url}`);
+        const { links, imgs } = result;
+        const index = completed.indexOf(url);
+        images[index] = imgs;
+        Log.log(`Sort out links`);
+        const newLinks = Rules.format(links);
+        const removingCompleted = R.uniq(R.without(completed, newLinks));
+        return removingCompleted;
+      })
+    )
+  ).then((collection) => {
+    const allLinks = collection.reduce((prev, curr) => prev.concat(curr), []);
+    const uniqAllLinks = R.uniq(allLinks);
+    Log.log(`Data next queue for the ${JSON.stringify(uniqAllLinks)}`);
+    return start(uniqAllLinks);
+  });
 }
