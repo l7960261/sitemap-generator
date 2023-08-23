@@ -3,7 +3,7 @@ const WebService = require("./pptr");
 const Log = require("./log");
 const Rules = require("./rules");
 const R = require("ramda");
-const XmlService = require('./xml');
+const XmlService = require("./xml");
 
 const { base } = config;
 const completed = [];
