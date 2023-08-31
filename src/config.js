@@ -1,8 +1,6 @@
 module.exports = {
-  base: "https://nohu99.org/",
+  base: "https://new88cc.com/",
   crawlLevel: 1,
-  extraDomains: [
-    "https://nohu90.org/",
-    "https://nohu91.org/"
-  ],
+  extraDomains: ["https://nohu90.org/", "https://nohu91.org/"],
+  routes: ["FAQ"],
 };

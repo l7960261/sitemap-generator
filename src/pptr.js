@@ -1,4 +1,5 @@
 const puppeteer = require("puppeteer");
+const Log = require('./log');
 
 const WebService = {
   async run(url) {
@@ -17,6 +18,7 @@ const WebService = {
       await browser.close();
       return { links, imgs };
     } catch (error) {
+      Log.log(`PPTR Error(${url}): ${JSON.stringify(error)}`)
       return { links: [], imgs: [] };
     }
   },
